@@ -1,6 +1,5 @@
 import pygame as py
 import random
-from matplotlib import colors as mcolors
 py.init()
 
 w, h = 1401, 801
@@ -144,6 +143,7 @@ def remove_walls():
       b.wall[0] = False
 
 clock = py.time.Clock()
+check = 1
 game = True
 while game:
     for event in py.event.get():
@@ -151,10 +151,8 @@ while game:
             game = False
             py.quit()
     screen.fill(black)
-
-    pause = branch()
-    if pause == 0:
-      game = False
+    if check != 0:
+      check = branch()
     for cell in Branch:
       cell.show(green)
     for cell in Cells_Maze:
@@ -163,67 +161,3 @@ while game:
 
     py.display.update()
     clock.tick(120)
-
-stack = []
-colors = dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS)
-by_hsv = sorted((tuple(mcolors.rgb_to_hsv(mcolors.to_rgba(color)[:3])), name)
-                for name, color in colors.items())
-colors = [tuple(255*mcolors.hsv_to_rgb(hsv)) for hsv,name in by_hsv]
-colors = colors[5:]
-temp = 0
-def color(x):
-  global temp, COLOR
-  a, b = x.i, x.j
-  stack.append(x)
-  if not x.wall[0]:
-    top = Cells[index(a, b - 1)]
-    if top not in stack:
-      top.show(COLOR)
-      top.walls()
-      py.display.update()
-      clock.tick(30)
-      color(top)
-  if not x.wall[1]:
-    right = Cells[index(a + 1, b)]
-    if right not in stack:
-      right.show(COLOR)
-      right.walls()
-      py.display.update()
-      clock.tick(30)
-      color(right)
-  if not x.wall[2]:
-    bottom = Cells[index(a, b + 1)]
-    if bottom not in stack:
-      bottom.show(COLOR)
-      bottom.walls()
-      py.display.update()
-      clock.tick(30)
-      color(bottom)
-  if not x.wall[3]:
-    left = Cells[index(a - 1, b)]
-    if left not in stack:
-      left.show(COLOR)
-      left.walls()
-      py.display.update()
-      clock.tick(30)
-      color(left)
-  temp += 1
-  try:
-    COLOR = colors[temp]
-  except:
-    temp = 0
-    COLOR = colors[temp]
-
-COLOR = colors[0]
-current = Cells[0]
-while True:
-  for event in py.event.get():
-    if event.type == py.QUIT:
-      py.quit()
-
-  try:
-    current.show(COLOR)
-    current.walls()
-    color(current)
-  except:
-    pass
